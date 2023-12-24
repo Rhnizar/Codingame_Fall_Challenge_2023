@@ -1,24 +1,10 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Codingame_Fall_Challenge_2023V2.cpp                :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/22 17:44:57 by rrhnizar          #+#    #+#             */
-/*   Updated: 2023/12/22 17:45:00 by rrhnizar         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-
-
-
 #include <iostream>
 #include <string>
 #include <vector>
 #include <algorithm>
 #include <math.h>
 #include <map>
+#include <random>
 
 using namespace std;
 
@@ -46,21 +32,34 @@ int check_id(vector<int> VId, int IdCheck)
     return -1;
 }
 
+
 class Fish
 {
     public :
         int creature_id;
         int color;
         int type;
-        int    x;
-        int    y;
         Fish(int creature_id, int color, int type)
         {
             this->creature_id = creature_id;
             this->color = color;
             this->type = type;
         }
-};      
+};
+
+class Radar
+{
+	public:
+		string radar;
+		int drone_id;
+        int creature_id;
+	Radar(string radar, int drone_id, int creature_id)
+	{
+		this->radar = radar;
+		this->drone_id = drone_id;
+		this->creature_id = creature_id;
+	}
+};
 
 class My_drone
 {
@@ -70,14 +69,18 @@ class My_drone
         int drone_y;
 		int emergency;
         int battery;
-		My_drone(int drone_id, int drone_x, int drone_y, int emergency, int battery)
+		vector<Radar> RadarDrone;
+		int light;
+		My_drone(int drone_id, int drone_x, int drone_y, int emergency, int battery, int light)
 		{
 			this->drone_id = drone_id;
 			this->drone_x = drone_x;
 			this->drone_y = drone_y;
 			this->emergency= emergency;
 			this->battery = battery;
+			this->light = light;
 		}
+	
 };
 
 class Visible_creature
@@ -101,20 +104,6 @@ class Visible_creature
 
 		this->color = color;
 		this->type = type;
-	}
-};
-
-class Radar
-{
-	public:
-		string radar;
-		int drone_id;
-        int creature_id;
-	Radar(string radar, int drone_id, int creature_id)
-	{
-		this->radar = radar;
-		this->drone_id = drone_id;
-		this->creature_id = creature_id;
 	}
 };
 
@@ -160,69 +149,118 @@ string Calculate_Numbers_Of_Radar(vector<Radar> RaV)
 
 /* Drone Movement */
 
-int	TmpSize = 0;
-int stepSizeY = 1000;
-int StepSizeX = 1000;
-
-string DroneMovement(int i, vector<Radar> RadarV, vector<My_drone> My_droneV, vector<int> My_drone_scan)
+int steps_x = 600, steps_y = 600;
+int check = 0;
+int CountType2 = 0;
+void DroneMovement(My_drone drone, vector<int> My_drone_scan, int TmpSize, vector<Visible_creature> Visible_creatureV)
 {
-    int light = 0;
-	string rad = Calculate_Numbers_Of_Radar(RadarV);
-    if (My_droneV.at(i).drone_y > 3000)
-        light = 1;
-    // cerr << My_drone_scan.size() << "  " << TmpSize << endl;
-    if (My_drone_scan.size() > TmpSize + 3 && My_droneV[i].drone_y > 500)
-        cout << "MOVE " << My_droneV[i].drone_x << " 500 0" << endl;
-    else
+	string rad = Calculate_Numbers_Of_Radar(drone.RadarDrone);
+	if (My_drone_scan.size() > TmpSize + 2 && drone.drone_y > 500)
+        cout << "MOVE " << drone.drone_x << " 500 0" << endl;
+	else
     {
-        if (My_droneV[i].drone_y < 600)
+		if (drone.drone_y < 600)
             TmpSize = My_drone_scan.size();
-        if (rad == "TL")
+		if (rad == "TL" || (check == 1 && drone.drone_x > 2500))
         {
-            // cerr << "TL" << endl;
-            if (My_droneV.at(i).drone_x - StepSizeX > 0 && My_droneV.at(i).drone_y - stepSizeY > 0)
-                cout << "MOVE " << My_droneV.at(i).drone_x - StepSizeX << " " << My_droneV.at(i).drone_y - stepSizeY << " " << light << endl;
+            cerr << "TL" << endl;
+            if (drone.drone_x - steps_x > 0 && drone.drone_y - steps_y > 0)
+                cout << "MOVE " << drone.drone_x - steps_x << " " << drone.drone_y - steps_y << " " << drone.light << endl;
             else
-                cout << "MOVE " << My_droneV[i].drone_x << " 500 0" << endl;
+                cout << "MOVE " << drone.drone_x << " 500 0" << endl;
+            check = 1;
         }
-        else if(rad == "TR")
+        else if(rad == "TR" || (check == 2 && drone.drone_x < 7500))
         {
-            // cerr << "TR" << endl;
-            if (My_droneV.at(i).drone_x + StepSizeX < 9999 && My_droneV.at(i).drone_y - stepSizeY > 0)
-                cout << "MOVE " << My_droneV.at(i).drone_x + StepSizeX << " " << My_droneV.at(i).drone_y - stepSizeY << " " << light << endl;
+            cerr << "TR" << endl;
+            if (drone.drone_x + steps_x < 9999 && drone.drone_y - steps_y > 0)
+                cout << "MOVE " << drone.drone_x + steps_x << " " << drone.drone_y - steps_y << " " << drone.light << endl;
             else
-                cout << "MOVE " << My_droneV[i].drone_x << " 500 0" << endl;
+                cout << "MOVE " << drone.drone_x << " 500 0" << endl;
+            check = 2;
 		}
-        else if(rad == "BL")
+        else if(rad == "BL" || (check == 3 && drone.drone_x > 2500))
         {
-            // cerr << "BL" << endl;
-            if (My_droneV.at(i).drone_x - StepSizeX > 0 && My_droneV.at(i).drone_y + stepSizeY < 9999)
-                cout << "MOVE " << My_droneV.at(i).drone_x - StepSizeX << " " << My_droneV.at(i).drone_y + stepSizeY << " " << light << endl;
+            cerr << "BL" << endl;
+            if (drone.drone_x - steps_x > 0 && drone.drone_y + steps_y < 9999)
+                cout << "MOVE " << drone.drone_x - steps_x << " " << drone.drone_y + steps_y << " " << drone.light << endl;
             else
                 cout << "WAIT 0" << endl;
+            check = 3;
         }
-        else if(rad == "BR")
+        else if(rad == "BR" || (check == 4 && drone.drone_x < 7500))
         {
-            // cerr << "BR" << endl;
-            if (My_droneV.at(i).drone_x + StepSizeX < 9999 && My_droneV.at(i).drone_y + stepSizeY < 9999)
-                cout << "MOVE " << My_droneV.at(i).drone_x + StepSizeX << " " << My_droneV.at(i).drone_y + stepSizeY << " " << light << endl;
+            cerr << "BR" << endl;
+            if (drone.drone_x + steps_x < 9999 && drone.drone_y + steps_y < 9999)
+                cout << "MOVE " << drone.drone_x + steps_x << " " << drone.drone_y + steps_y << " " << drone.light << endl;
             else
                 cout << "WAIT 0" << endl;
+            check = 4;
         }
+	}
+}
+
+
+void MoveDrone(My_drone drone, vector<int> My_drone_scan, int &TmpSize, int sep)
+{
+    if (My_drone_scan.size() > TmpSize + 2 && drone.drone_y > 500)
+        cout << "MOVE " << drone.drone_x << " 500 0" << endl;
+	else
+    {
+        std::uniform_int_distribution<int> distributionX;
+        std::uniform_int_distribution<int> distributionY;
+        
+		if (drone.drone_y < 600)
+            TmpSize = My_drone_scan.size();
+        random_device rd;
+        mt19937 gen(rd());
+
+        // cerr << "heere.   " << CountType2 << endl;
+        // Generate random x and y coordinates for the player within the map
+        if(sep == 0)
+            distributionX = std::uniform_int_distribution<int>(0, 5000);
+        else
+            distributionX = std::uniform_int_distribution<int>(5000, 10000);
+        if(CountType2 != 4)
+            distributionY = std::uniform_int_distribution<int>(7500, 10000);
+        else
+            distributionY = std::uniform_int_distribution<int>(5000, 7500);
+        int playerX = distributionX(gen);
+        int playerY = distributionY(gen);
+        cout << "MOVE " << playerX << " " << playerY << " " << drone.light << endl;
     }
-    return rad;
+}
+
+void LightOnOff(My_drone &drone, int PosLightOn)
+{
+	if(drone.drone_y > PosLightOn)
+		drone.light = 1;
+}
+
+int CheckType(int creature_id, vector<Visible_creature> Visible_creatureV)
+{
+    for(size_t i=0; i<Visible_creatureV.size(); i++)
+    {
+        if(Visible_creatureV[i].creature_id == creature_id && Visible_creatureV[i].type == 2)
+            return 1;
+    }
+    return 0;
 }
 
 int main()
 {
-    int check = 1;
-    int TmpSize = 0;
-    int CheckValidation = 0;
+	int	TmpSize_drone1 = 0;
+	int	TmpSize_drone2 = 0;
     int creature_count;
     cin >> creature_count; cin.ignore();
     vector<Fish> FishV;
 	vector<Visible_creature> Visible_creatureV;
     vector<int> My_drone_scan;
+	vector<int> My_drone1_scan;
+	vector<int> My_drone2_scan;
+	int TmpSizeDrone1;
+	int TmpSizeDrone2;
+    
     
     for (int i = 0; i < creature_count; i++)
 	{
@@ -235,9 +273,10 @@ int main()
 
     // game loop
 
-    while (1) 
+    while (1)
 	{
         vector<My_drone> My_droneV;
+
         int my_score;
         cin >> my_score; cin.ignore();
         int foe_score;
@@ -248,10 +287,11 @@ int main()
 		{
             int creature_id;
             cin >> creature_id; cin.ignore();
-            // cerr << "heeeeeere  " << creature_id << endl;
-            // scan_id.push_back(creature_id);
+
+            // if(CheckType(creature_id, Visible_creatureV) == 1)
+            //     CountType2++;
+            // cerr << "ids     " << creature_id << endl;
         }
-        
         
         int foe_scan_count;
         cin >> foe_scan_count; cin.ignore();
@@ -270,7 +310,7 @@ int main()
             int emergency;
             int battery;
             cin >> drone_id >> drone_x >> drone_y >> emergency >> battery; cin.ignore();
-			My_droneV.push_back(My_drone(drone_id, drone_x, drone_y, emergency, battery));
+			My_droneV.push_back(My_drone(drone_id, drone_x, drone_y, emergency, battery, 0));
         }
         int foe_drone_count;
         cin >> foe_drone_count; cin.ignore();
@@ -288,14 +328,16 @@ int main()
         for (int i = 0; i < drone_scan_count; i++)
 		{
             int drone_id;
-            
             int creature_id;
             cin >> drone_id >> creature_id; cin.ignore();
-
-            // cerr << "id Salim. " << creature_id << "     drone id    " << drone_id << endl;
+			if(My_droneV[0].drone_id == drone_id && check_id(My_drone1_scan, creature_id) == -1 && check_id(My_drone2_scan, creature_id) == -1)
+				My_drone1_scan.push_back(creature_id);
+			else if(My_droneV[1].drone_id == drone_id && check_id(My_drone2_scan, creature_id) == -1 && check_id(My_drone1_scan, creature_id) == -1)
+				My_drone2_scan.push_back(creature_id);
         }
         int visible_creature_count;
         cin >> visible_creature_count; cin.ignore();
+        
         for (int i = 0; i < visible_creature_count; i++)
 		{
             int creature_id;
@@ -304,15 +346,9 @@ int main()
             int creature_vx;
             int creature_vy;
             
-
 			int color;
 			int type;
             cin >> creature_id >> creature_x >> creature_y >> creature_vx >> creature_vy; cin.ignore();
-            if (check_id(My_drone_scan, creature_id) == -1)
-            {
-                My_drone_scan.push_back(creature_id);
-            }
-            // cerr << "id Me    " << creature_id << endl;
 			for(size_t i=0; i<FishV.size(); i++)
 			{
 				if(FishV.at(i).creature_id == creature_id)
@@ -326,9 +362,6 @@ int main()
         }
         int radar_blip_count;
         cin >> radar_blip_count; cin.ignore();
-		vector<Radar> RadarDrone1;
-        vector<Radar> RadarDrone2;
-        // cerr << "      " << radar_blip_count << endl;
         for (int i = 0; i < radar_blip_count; i++)
 		{
             int drone_id;
@@ -336,30 +369,32 @@ int main()
 			string radar;
             
             cin >> drone_id >> creature_id >> radar; cin.ignore();
-
-            if (check_id(My_drone_scan, creature_id) == -1 && drone_id == My_droneV[0].drone_id)
-			    RadarDrone1.push_back(Radar(radar, drone_id, creature_id));
-            else if (check_id(My_drone_scan, creature_id) == -1 && drone_id == My_droneV[1].drone_id)
-                RadarDrone2.push_back(Radar(radar, drone_id, creature_id));
+			
+			if(My_droneV[0].drone_id == drone_id && check_id(My_drone1_scan, creature_id) == -1 && check_id(My_drone2_scan, creature_id) == -1)
+				My_droneV[0].RadarDrone.push_back(Radar(radar, drone_id, creature_id));
+			else if(My_droneV[1].drone_id == drone_id && check_id(My_drone1_scan, creature_id) == -1 && check_id(My_drone2_scan, creature_id) == -1)
+				My_droneV[1].RadarDrone.push_back(Radar(radar, drone_id, creature_id));
+			
         }
-		int light = 0;
-        if (My_droneV.at(0).drone_y > 3000)
-            light = 1;
-        int stepSize = 1000;
-        int Slow_StepSize = 1000;
-
-        // for (Radar rd : RadarDrone1)
-        //     cerr << " radar  :  " << rd.radar << "   rd.creature_id :  " << rd.creature_id <<  "   rd.drone_id:  " << rd.drone_id << endl;
-        // cerr << "\n-------------------------------------\n";
-        // for (Radar rd : RadarDrone2)
-        //     cerr << " radar  :  " << rd.radar << "   rd.creature_id :  " << rd.creature_id <<  "   rd.drone_id:  " << rd.drone_id << endl;
+        if(CountType2 != 4)
+        {
+		    LightOnOff(My_droneV[0], 7500);
+		    LightOnOff(My_droneV[1], 7500);
+        }
+        else
+        {
+            LightOnOff(My_droneV[0], 5000);
+		    LightOnOff(My_droneV[1], 5000);
+        }
         for (int i = 0; i < my_drone_count; i++)
         {
             if(i == 0)
-                DroneMovement(i, RadarDrone1, My_droneV, My_drone_scan);
+                MoveDrone(My_droneV[0], My_drone1_scan, TmpSize_drone1, 0);
+                // DroneMovement(My_droneV[0], My_drone1_scan, TmpSize_drone1, Visible_creatureV);
             else
-                DroneMovement(i, RadarDrone2, My_droneV, My_drone_scan);
-
+                MoveDrone(My_droneV[1], My_drone2_scan, TmpSize_drone2, 1);
+                // cout << "MOVE 5000 7000 0 " << endl; 
+                // DroneMovement(My_droneV[1], My_drone2_scan, TmpSize_drone2);
         }
 	}
 }

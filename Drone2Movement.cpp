@@ -1,14 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Codingame_Fall_Challenge_2023V2.cpp                :+:      :+:    :+:   */
+/*   Drone2Movement.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/22 17:44:57 by rrhnizar          #+#    #+#             */
-/*   Updated: 2023/12/22 17:45:00 by rrhnizar         ###   ########.fr       */
+/*   Created: 2023/12/22 17:45:57 by rrhnizar          #+#    #+#             */
+/*   Updated: 2023/12/23 12:26:08 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
+
 
 
 
@@ -161,17 +164,16 @@ string Calculate_Numbers_Of_Radar(vector<Radar> RaV)
 /* Drone Movement */
 
 int	TmpSize = 0;
-int stepSizeY = 1000;
-int StepSizeX = 1000;
+int steps_x = 1000, steps_y = 1000;
 
 string DroneMovement(int i, vector<Radar> RadarV, vector<My_drone> My_droneV, vector<int> My_drone_scan)
 {
     int light = 0;
 	string rad = Calculate_Numbers_Of_Radar(RadarV);
+    cerr << "      " << rad << endl;
     if (My_droneV.at(i).drone_y > 3000)
         light = 1;
-    // cerr << My_drone_scan.size() << "  " << TmpSize << endl;
-    if (My_drone_scan.size() > TmpSize + 3 && My_droneV[i].drone_y > 500)
+    if (My_drone_scan.size() > TmpSize + 4 && My_droneV[i].drone_y > 500)
         cout << "MOVE " << My_droneV[i].drone_x << " 500 0" << endl;
     else
     {
@@ -180,37 +182,58 @@ string DroneMovement(int i, vector<Radar> RadarV, vector<My_drone> My_droneV, ve
         if (rad == "TL")
         {
             // cerr << "TL" << endl;
-            if (My_droneV.at(i).drone_x - StepSizeX > 0 && My_droneV.at(i).drone_y - stepSizeY > 0)
-                cout << "MOVE " << My_droneV.at(i).drone_x - StepSizeX << " " << My_droneV.at(i).drone_y - stepSizeY << " " << light << endl;
+            if (My_droneV.at(i).drone_x - steps_x > 0 && My_droneV.at(i).drone_y - steps_y > 0)
+                cout << "MOVE " << My_droneV.at(i).drone_x - steps_x << " " << My_droneV.at(i).drone_y - steps_y << " " << light << endl;
             else
                 cout << "MOVE " << My_droneV[i].drone_x << " 500 0" << endl;
         }
         else if(rad == "TR")
         {
             // cerr << "TR" << endl;
-            if (My_droneV.at(i).drone_x + StepSizeX < 9999 && My_droneV.at(i).drone_y - stepSizeY > 0)
-                cout << "MOVE " << My_droneV.at(i).drone_x + StepSizeX << " " << My_droneV.at(i).drone_y - stepSizeY << " " << light << endl;
+            if (My_droneV.at(i).drone_x + steps_x < 9999 && My_droneV.at(i).drone_y - steps_y > 0)
+                cout << "MOVE " << My_droneV.at(i).drone_x + steps_x << " " << My_droneV.at(i).drone_y - steps_y << " " << light << endl;
             else
                 cout << "MOVE " << My_droneV[i].drone_x << " 500 0" << endl;
 		}
         else if(rad == "BL")
         {
             // cerr << "BL" << endl;
-            if (My_droneV.at(i).drone_x - StepSizeX > 0 && My_droneV.at(i).drone_y + stepSizeY < 9999)
-                cout << "MOVE " << My_droneV.at(i).drone_x - StepSizeX << " " << My_droneV.at(i).drone_y + stepSizeY << " " << light << endl;
+            if (My_droneV.at(i).drone_x - steps_x > 0 && My_droneV.at(i).drone_y + steps_y < 9999)
+                cout << "MOVE " << My_droneV.at(i).drone_x - steps_x << " " << My_droneV.at(i).drone_y + steps_y << " " << light << endl;
             else
                 cout << "WAIT 0" << endl;
         }
         else if(rad == "BR")
         {
             // cerr << "BR" << endl;
-            if (My_droneV.at(i).drone_x + StepSizeX < 9999 && My_droneV.at(i).drone_y + stepSizeY < 9999)
-                cout << "MOVE " << My_droneV.at(i).drone_x + StepSizeX << " " << My_droneV.at(i).drone_y + stepSizeY << " " << light << endl;
+            if (My_droneV.at(i).drone_x + steps_x < 9999 && My_droneV.at(i).drone_y + steps_y < 9999)
+                cout << "MOVE " << My_droneV.at(i).drone_x + steps_x << " " << My_droneV.at(i).drone_y + steps_y << " " << light << endl;
             else
                 cout << "WAIT 0" << endl;
         }
     }
     return rad;
+}
+
+int typeCount = 0;
+int TypeFish(int id, vector<Visible_creature> Visible_creatureV)
+{
+	for(size_t i=0; i<Visible_creatureV.size())
+}
+void Drone2Movement(int i, vector<Radar> RadarV, vector<My_drone> My_droneV, vector<int> My_drone_scan, vector<Visible_creature> Visible_creatureV)
+{
+	int type = -1;
+	for(size_t i=0; i<RadarV.size(); i++)
+	{
+		type = TypeFish(RadarV[i].creature_id, Visible_creatureV);
+		if ()
+	}
+}
+
+void Drone2Movement(int i, vector<My_drone> My_droneV)
+{
+	if(My_droneV.at(i).drone_y < 10000)
+		cout << "MOVE " << My_droneV.at(i).drone_x, " " << 9999 << " 1" << endl;
 }
 
 int main()
@@ -345,8 +368,6 @@ int main()
 		int light = 0;
         if (My_droneV.at(0).drone_y > 3000)
             light = 1;
-        int stepSize = 1000;
-        int Slow_StepSize = 1000;
 
         // for (Radar rd : RadarDrone1)
         //     cerr << " radar  :  " << rd.radar << "   rd.creature_id :  " << rd.creature_id <<  "   rd.drone_id:  " << rd.drone_id << endl;
@@ -358,8 +379,9 @@ int main()
             if(i == 0)
                 DroneMovement(i, RadarDrone1, My_droneV, My_drone_scan);
             else
+                // cout << "MOVE 6000 500 0" << endl;
+                // cout << "WAIT 0" << endl;
                 DroneMovement(i, RadarDrone2, My_droneV, My_drone_scan);
-
         }
 	}
 }
