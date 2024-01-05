@@ -914,10 +914,6 @@ void    Avoid_Monster(My_drone drone, int Drone_NextX, int Drone_NextY)
                 EstablishedPoints[i].dist = distance(EstablishedPoints[i].x, EstablishedPoints[i].y, Drone_NextX, Drone_NextY);
                 int DisDrone = distance(drone.drone_x, drone.drone_y, EstablishedPoints[i].x, EstablishedPoints[i].y);
                 int DisMonster = distance(drone.Monsters[i].creature_x, drone.Monsters[i].creature_y, drone.Monsters[j].creature_x + drone.Monsters[j].creature_vx, drone.Monsters[j].creature_y + drone.Monsters[j].creature_vy);
-                // for(size_t i=0; i<DisDrone; i+=3)
-                // {
-
-                // }
                 if(TmpDist > EstablishedPoints[i].dist)
                 {
                     TmpDist = EstablishedPoints[i].dist;
@@ -927,7 +923,6 @@ void    Avoid_Monster(My_drone drone, int Drone_NextX, int Drone_NextY)
                 }
             }
         }
-        // cerr << "Point :  x=  " << EstablishedPoints[i].x << "  y=  " << EstablishedPoints[i].y << endl;
     }
     // if(drone.Monsters.size() > 0)
         cout << "MOVE " << (int)SavePoint.x << " " << (int)SavePoint.y << " " << drone.light << " tal3a o l9at monster drone_id " + to_string(drone.drone_id) << endl;
